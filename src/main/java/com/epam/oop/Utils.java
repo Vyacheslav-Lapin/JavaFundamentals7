@@ -1,4 +1,4 @@
-package com.epam;
+package com.epam.oop;
 
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;

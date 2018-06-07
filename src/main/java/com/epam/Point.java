@@ -1,23 +1,24 @@
 package com.epam;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
-@Builder // @AllArgsConstructor(access = PRIVATE)
-//@Data//@Getter @Setter @ToString @EqualsAndHashCode @RequiredArgsConstructor
-//@Value //@Getter @ToString @EqualsAndHashCode @AllArgsConstructor @FieldDefaults(level = PRIVATE, makeFinal = true)
 //@NoArgsConstructor
+@Builder // @AllArgsConstructor(access = PRIVATE)
+@Data // @Getter //@Setter @ToString @EqualsAndHashCode @RequiredArgsConstructor
+//@Value //@Getter @ToString @EqualsAndHashCode @AllArgsConstructor @FieldDefaults(level = PRIVATE, makeFinal = true)
 @MyAnnotation("Мама мыла раму!")
 public class Point {
     int x;
+
+    public int getX() {
+        return this.x;
+    }
 
     //    @NonFinal
 //    @Builder.Default
@@ -43,11 +44,6 @@ public class Point {
         System.out.println(myAnnotation.value());
 
         log.info("Мама мыла раму!");
-
-        {
-            @Cleanup Connection connection = null;
-            connection.beginRequest();
-        }
 //
 //        //...
 //        connection.close();
