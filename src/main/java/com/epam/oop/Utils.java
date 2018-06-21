@@ -2,6 +2,7 @@ package com.epam.oop;
 
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Contract;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -11,6 +12,7 @@ public class Utils {
 
     int CONST1 = 5;
 
+    @Contract(pure = true)
     int sm1() {
         return CONST1;
     }
