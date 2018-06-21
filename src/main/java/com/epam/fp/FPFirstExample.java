@@ -15,12 +15,12 @@ public interface FPFirstExample {
     static String getLoginAndPwd(String fileName) {
         Properties properties = new Properties();
         @Cleanup InputStream resource = FPFirstExample.class.getResourceAsStream(
-                format("/%TEXT", fileName));
+                format("/%s", fileName));
         properties.load(resource);
 
         return ofNullable(properties.getProperty("login"))
                 .flatMap(login -> ofNullable(properties.getProperty("password"))
-                        .map(pwd -> format("%TEXT=%TEXT", login, pwd))
+                        .map(pwd -> format("%s=%s", login, pwd))
                 ).orElseThrow(() ->
                         new RuntimeException("There in no login and/or password!"));
     }
