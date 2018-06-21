@@ -3,6 +3,7 @@ package com.epam.io;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -14,20 +15,15 @@ public class PipedExample {
 
     @SneakyThrows
     public static void main(String... args) {
-        @Cleanup PipedInputStream pipeIn = new PipedInputStream();
-        @Cleanup PipedOutputStream pipeOut = new PipedOutputStream(pipeIn);
+        @Cleanup val pipedInputStream = new PipedInputStream();
+        @Cleanup val pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
-        int countRead = 0;
-        int[] toRead;
+        for (int i = 0; i < 20;)
+            pipedOutputStream.write(i++);
 
-        for (int i = 0; i < 20; i++)
-            pipeOut.write(i);
-
-        int willRead = pipeIn.available();
-        toRead = new int[willRead];
-
-        for (int i = 0; i < willRead; i++) {
-            toRead[i] = pipeIn.read();
+        for (int toRead[] = new int[pipedInputStream.available()],
+             i = 0; i < toRead.length; i++) {
+            toRead[i] = pipedInputStream.read();
             System.out.print(toRead[i] + " ");
         }
     }
