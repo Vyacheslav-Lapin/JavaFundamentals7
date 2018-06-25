@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @FieldDefaults(level = PRIVATE, makeFinal = true)
-class FPFirstExampleTest {
+class FpFirstExampleTest {
 
     static String FILE_NAME = "credentials.properties";
     static String WRONG_FILE_NAME = "wrong-cred.properties";
@@ -20,11 +20,11 @@ class FPFirstExampleTest {
     @Test
     @DisplayName("GetLoginAndPwd method works correctly")
     void testGetLoginAndPwd() {
-        assertThat(FPFirstExample.getLoginAndPwd(FILE_NAME), is("vl=qwerty"));
+        assertThat(FpFirstExample.getLoginAndPwd(FILE_NAME), is("vl=qwerty"));
 
         RuntimeException runtimeException =
                 assertThrows(RuntimeException.class, () ->
-                        FPFirstExample.getLoginAndPwd(WRONG_FILE_NAME));
+                        FpFirstExample.getLoginAndPwd(WRONG_FILE_NAME));
 
         log.info(runtimeException.getMessage());
     }

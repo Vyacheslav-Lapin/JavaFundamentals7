@@ -35,6 +35,14 @@
             <version>LATEST</version>
         </dependency>
 
+        <!-- H2 -->
+        <dependency>
+        	<groupId>com.h2database</groupId>
+        	<artifactId>h2</artifactId>
+        	<version>LATEST</version>
+        	<!--<scope>test</scope>-->
+        </dependency>
+
         <!-- CODE GENERATION (Lombok & CheckerFramework) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
