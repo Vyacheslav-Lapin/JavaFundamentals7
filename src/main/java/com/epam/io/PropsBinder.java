@@ -19,7 +19,8 @@ public interface PropsBinder {
     @SneakyThrows
     static <T> T from(String fileName, Class<T> tClass) {
         val properties = new Properties();
-        @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(String.format("/%s.properties", fileName));
+        @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(
+                String.format("/%s.properties", fileName));
         properties.load(inputStream);
 
         //noinspection unchecked
@@ -45,7 +46,16 @@ public interface PropsBinder {
             return Double.parseDouble(value);
         if (parameterType == long.class || parameterType == Long.class)
             return Long.parseLong(value);
-        // TODO: 27/06/2018 нада реализовать для прочих примитивов
+        if (parameterType == boolean.class || parameterType == Boolean.class)
+            return Boolean.parseBoolean(value);
+        if (parameterType == float.class || parameterType == Float.class)
+            return Float.parseFloat(value);
+        if (parameterType == char.class || parameterType == Character.class)
+            return value.charAt(0);
+        if (parameterType == byte.class || parameterType == Byte.class)
+            return Byte.parseByte(value);
+        if (parameterType == short.class || parameterType == Short.class)
+            return Short.parseShort(value);
         // TODO: 27/06/2018 нада реализовать для ссылочных типов
         return value;
     }

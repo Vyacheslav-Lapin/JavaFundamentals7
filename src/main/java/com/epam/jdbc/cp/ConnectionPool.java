@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class ConnectionPool implements Supplier<Connection>, Closeable {
 
     final BlockingQueue<PooledConnection> freeConnections;
-    private volatile boolean isOpened = true;
+    volatile boolean isOpened = true;
 
     public ConnectionPool() {
         val jdbcProperties = PropsBinder.from("jdbc", JdbcProperties.class);
@@ -63,11 +63,17 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
     @SneakyThrows
     private static Optional<String> getFileAsString(String initScriptsPath, String name) {
         val path = String.format("/%s/%s.sql", initScriptsPath, name);
+
+        Function<Path, String> read =
+                CheckedFunction1.<Path, String>narrow(filePath -> {
+                    @Cleanup Stream<String> lines = Files.lines(filePath);
+                    return lines.collect(Collectors.joining());
+                }).unchecked();
+
         return Optional.ofNullable(ConnectionPool.class.getResource(path))
                 .map(CheckedFunction1.narrow(URL::toURI).unchecked())
                 .map(Paths::get)
-                .map(CheckedFunction1.<Path, Stream<String>>narrow(Files::lines).unchecked())
-                .map(stringStream -> stringStream.collect(Collectors.joining()));
+                .map(read);
     }
 
     @SneakyThrows
@@ -92,7 +98,6 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
     @Override
     @SneakyThrows
     public Connection get() {
-//        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         if (isOpened)
             return freeConnections.take();
         else
