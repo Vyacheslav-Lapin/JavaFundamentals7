@@ -19,7 +19,7 @@ public interface FirstJdbcExample {
     String GROUP_ID_FIELD = "group_id";
 
     @SneakyThrows
-    static void main(String... args) {
+    static void main(String... __) {
         @Cleanup val connection = DriverManager.getConnection(DB_URL);
         @Cleanup val statement = connection.createStatement();
         statement.executeUpdate(CREATE_TABLE_SQL);
