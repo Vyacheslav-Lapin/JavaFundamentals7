@@ -9,6 +9,8 @@ import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-public class ConnectionPool implements Supplier<Connection>, AutoCloseable {
+public class ConnectionPool implements Supplier<Connection>, Closeable {
 
     final BlockingQueue<PooledConnection> freeConnections;
     private volatile boolean isOpened = true;
@@ -91,7 +93,10 @@ public class ConnectionPool implements Supplier<Connection>, AutoCloseable {
     @SneakyThrows
     public Connection get() {
 //        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-        return freeConnections.take();
+        if (isOpened)
+            return freeConnections.take();
+        else
+            throw new IOException("Connection Pool is already closed!");
     }
 
     @Override
