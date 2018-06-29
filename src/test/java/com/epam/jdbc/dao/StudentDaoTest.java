@@ -3,17 +3,23 @@ package com.epam.jdbc.dao;
 import com.epam.fp.CheckedRunnable;
 import com.epam.jdbc.cp.ConnectionPool;
 import com.epam.jdbc.model.Student;
+import lombok.AccessLevel;
+import lombok.Cleanup;
+import lombok.experimental.FieldDefaults;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNot;
 import org.junit.jupiter.api.*;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.*;
 
+@FieldDefaults(level = PRIVATE, makeFinal = true)
 class StudentDaoTest {
 
     static ConnectionPool connectionPool = new ConnectionPool();
@@ -30,7 +36,8 @@ class StudentDaoTest {
     @Test
     @DisplayName("FindAll method works correctly")
     void testFindAll() {
-        assertThat(studentDao.findAll().count(), is(2L));
+        @Cleanup Stream<Student> all = studentDao.findAll();
+        assertThat(all.count(), is(2L));
         studentDao.delete(vasyaPupkin);
     }
 

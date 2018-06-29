@@ -13,9 +13,9 @@ public interface CheckedConsumer<T> extends io.vavr.CheckedConsumer<T> {
     }
 
     /**
-     * Returns an unchecked function that will <em>sneaky throw</em> if an exceptions occurs when applying the function.
+     * Returns an unchecked consumer that will <em>sneaky throw</em> if an exceptions occurs when applying the function.
      *
-     * @return a new Function0 that throws a {@code Throwable}.
+     * @return a new Consumer<T> that throws a {@code Throwable}.
      */
     default Consumer<T> unchecked() {
         return value -> {

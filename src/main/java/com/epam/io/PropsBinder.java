@@ -1,9 +1,10 @@
 package com.epam.io;
 
-import com.epam.fp.ToPropertiesCollector;
+import com.epam.fp.StreamUtils;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -34,6 +35,12 @@ public interface PropsBinder {
                 .max(Comparator.comparingInt(Constructor::getParameterCount))
                 .orElseThrow(() -> new RuntimeException("Нету ни одного конструктора!"));
 
+        return from(properties, constructor);
+    }
+
+    @NotNull
+    @SneakyThrows
+    static <T> T from(Properties properties, Constructor<T> constructor) {
         Object[] paramValues = Arrays.stream(constructor.getParameters())
                 .map(parameter -> resolveParameter(parameter, properties))
                 .toArray();
@@ -64,7 +71,12 @@ public interface PropsBinder {
         if (parameterType == short.class || parameterType == Short.class)
             return Short.parseShort(value);
 
-        Properties collect = properties.entrySet().stream()
+        return resolveObjectParameter(properties, parameterType, name);
+    }
+
+    @NotNull
+    static Object resolveObjectParameter(Properties properties, Class<?> parameterType, String name) {
+        Properties subProps = properties.entrySet().stream()
                 .map(entry -> Map.entry(
                         entry.getKey().toString(),
                         entry.getValue().toString()))
@@ -72,8 +84,8 @@ public interface PropsBinder {
                 .map(entry -> Map.entry(
                         entry.getKey().substring(name.length() + 1),
                         entry.getValue()))
-                .collect(new ToPropertiesCollector());
+                .collect(StreamUtils.toProperties());
 
-        return value;
+        return from(subProps, parameterType);
     }
 }

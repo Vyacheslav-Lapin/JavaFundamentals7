@@ -1,5 +1,6 @@
 package com.epam.fp;
 
+import checkers.units.quals.K;
 import lombok.experimental.FieldDefaults;
 
 import java.util.EnumSet;
@@ -11,11 +12,12 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-public class ToPropertiesCollector implements Collector<Map.Entry<String, String>, Properties, Properties> {
+public class ToPropertiesCollector<K, V> implements Collector<Map.Entry<K, V>, Properties, Properties> {
 
     @Override
     public Supplier<Properties> supplier() {
@@ -23,8 +25,11 @@ public class ToPropertiesCollector implements Collector<Map.Entry<String, String
     }
 
     @Override
-    public BiConsumer<Properties, Map.Entry<String, String>> accumulator() {
-        return (properties, entry) -> properties.put(entry.getKey(), entry.getValue());
+    public BiConsumer<Properties, Map.Entry<K, V>> accumulator() {
+        return (properties, entry) ->
+                properties.put(
+                        entry.getKey().toString(),
+                        entry.getValue().toString());
     }
 
     @Override
