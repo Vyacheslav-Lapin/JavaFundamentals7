@@ -1,17 +1,17 @@
 package com.epam.io;
 
-import com.epam.fp.StreamUtils;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 
 public interface PropsBinder {
 
@@ -20,72 +20,81 @@ public interface PropsBinder {
     }
 
     @SneakyThrows
-    static <T> T from(String fileName, Class<T> tClass) {
+    static <T> T from(String propertiesFileName, Class<T> tClass) {
         val properties = new Properties();
         @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(
-                String.format("/%s.properties", fileName));
+                String.format("/%s.properties", propertiesFileName));
         properties.load(inputStream);
-        return from(properties, tClass);
+        return from(properties::getProperty, tClass);
     }
 
     @SneakyThrows
-    static <T> T from(Properties properties, Class<T> tClass) {
+    static <T> T from(Function<String, String> getProperty, Class<T> tClass) {
         //noinspection unchecked
         val constructor = (Constructor<T>) Arrays.stream(tClass.getConstructors())
                 .max(Comparator.comparingInt(Constructor::getParameterCount))
                 .orElseThrow(() -> new RuntimeException("Нету ни одного конструктора!"));
 
-        return from(properties, constructor);
+        return from(getProperty, constructor);
     }
 
     @NotNull
     @SneakyThrows
-    static <T> T from(Properties properties, Constructor<T> constructor) {
+    static <T> T from(Function<String, String> getProperty, Constructor<T> constructor) {
         Object[] paramValues = Arrays.stream(constructor.getParameters())
-                .map(parameter -> resolveParameter(parameter, properties))
+                .map(parameter -> resolveParameter(parameter, getProperty))
                 .toArray();
 
         return constructor.newInstance(paramValues);
     }
 
-    private static Object resolveParameter(Parameter parameter, Properties properties) {
-        Class<?> parameterType = parameter.getType();
-        String name = parameter.getName();
-        String value = properties.getProperty(name);
-        if (parameterType == String.class)
-            return value;
-        if (parameterType == int.class || parameterType == Integer.class)
-            return Integer.parseInt(value);
-        if (parameterType == double.class || parameterType == Double.class)
-            return Double.parseDouble(value);
-        if (parameterType == long.class || parameterType == Long.class)
-            return Long.parseLong(value);
-        if (parameterType == boolean.class || parameterType == Boolean.class)
-            return Boolean.parseBoolean(value);
-        if (parameterType == float.class || parameterType == Float.class)
-            return Float.parseFloat(value);
-        if (parameterType == char.class || parameterType == Character.class)
-            return value.charAt(0);
-        if (parameterType == byte.class || parameterType == Byte.class)
-            return Byte.parseByte(value);
-        if (parameterType == short.class || parameterType == Short.class)
-            return Short.parseShort(value);
+    private static Object resolveParameter(Parameter parameter,
+                                           Function<String, String> getProperty) {
+        return resolveParameter(getProperty, parameter.getType(), parameter.getName());
+    }
 
-        return resolveObjectParameter(properties, parameterType, name);
+    private static <T> T resolveParameter(Function<String, String> getProperty,
+                                  Class<T> parameterType,
+                                  String name) {
+
+        if (parameterType == String.class)
+            //noinspection unchecked
+            return (T) getProperty.apply(name);
+        if (parameterType == int.class || parameterType == Integer.class)
+            //noinspection unchecked
+            return (T) Integer.valueOf(getProperty.apply(name));
+        if (parameterType == double.class || parameterType == Double.class)
+            //noinspection unchecked
+            return (T) Double.valueOf(getProperty.apply(name));
+        if (parameterType == long.class || parameterType == Long.class)
+            //noinspection unchecked
+            return (T) Long.valueOf(getProperty.apply(name));
+        if (parameterType == boolean.class || parameterType == Boolean.class)
+            //noinspection unchecked
+            return (T) Boolean.valueOf(getProperty.apply(name));
+        if (parameterType == float.class || parameterType == Float.class)
+            //noinspection unchecked
+            return (T) Float.valueOf(getProperty.apply(name));
+        if (parameterType == char.class || parameterType == Character.class)
+            //noinspection unchecked
+            return (T) Character.valueOf(getProperty.apply(name).charAt(0));
+        if (parameterType == byte.class || parameterType == Byte.class)
+            //noinspection unchecked
+            return (T) Byte.valueOf(getProperty.apply(name));
+        if (parameterType == short.class || parameterType == Short.class)
+            //noinspection unchecked
+            return (T) Short.valueOf(getProperty.apply(name));
+
+        return resolveObjectParameter(getProperty, parameterType, name);
     }
 
     @NotNull
-    static Object resolveObjectParameter(Properties properties, Class<?> parameterType, String name) {
-        Properties subProps = properties.entrySet().stream()
-                .map(entry -> Map.entry(
-                        entry.getKey().toString(),
-                        entry.getValue().toString()))
-                .filter(entry -> entry.getKey().startsWith(name + '.'))
-                .map(entry -> Map.entry(
-                        entry.getKey().substring(name.length() + 1),
-                        entry.getValue()))
-                .collect(StreamUtils.toProperties());
-
-        return from(subProps, parameterType);
+    static <T> T resolveObjectParameter(Function<String, String> getProperty,
+                                         Class<T> type,
+                                         String prefix) {
+        //noinspection AssertionCanBeIf
+        if (type.isInterface() || Modifier.isAbstract(type.getModifiers()))
+            throw new PropsBinderException("Type must not be an interface or abstract class!");
+        return from(s -> getProperty.apply(String.format("%s.%s", prefix, s)), type);
     }
 }
