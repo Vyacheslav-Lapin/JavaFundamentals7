@@ -62,7 +62,7 @@ public interface PropsBinder {
         //noinspection unchecked
         return (Constructor<T>) Arrays.stream(tClass.getConstructors())
                 .max(Comparator.comparingInt(Constructor::getParameterCount))
-                .orElseThrow(() -> new RuntimeException("Нету ни одного конструктора!"));
+                .orElseThrow(() -> new PropsBinderException("Нету ни одного конструктора!"));
     }
 
     private static <T> T resolveParameter(Function<String, String> getProperty,
