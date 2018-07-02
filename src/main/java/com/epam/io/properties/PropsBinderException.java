@@ -1,4 +1,4 @@
-package com.epam.io;
+package com.epam.io.properties;
 
 class PropsBinderException extends RuntimeException {
     PropsBinderException(String message) {

@@ -1,4 +1,4 @@
-package com.epam.io;
+package com.epam.io.properties;
 
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Properties;
@@ -15,47 +14,60 @@ import java.util.function.Function;
 
 public interface PropsBinder {
 
+    @NotNull
     static <T> T from(Class<T> tClass) {
         return from(tClass.getSimpleName(), tClass);
     }
 
-    @SneakyThrows
+    @NotNull
     static <T> T from(String propertiesFileName, Class<T> tClass) {
-        val properties = new Properties();
-        @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(
-                String.format("/%s.properties", propertiesFileName));
-        properties.load(inputStream);
-        return from(properties::getProperty, tClass);
+        return from(
+                parseProperties(propertiesFileName),
+                getMaxArgsCountConstructor(tClass));
+    }
+
+    static <T> T from(String propertiesFileName,
+                      @NotNull Constructor<T> constructor) {
+        return from(parseProperties(propertiesFileName), constructor);
     }
 
     @SneakyThrows
-    static <T> T from(Function<String, String> getProperty, Class<T> tClass) {
-        //noinspection unchecked
-        val constructor = (Constructor<T>) Arrays.stream(tClass.getConstructors())
-                .max(Comparator.comparingInt(Constructor::getParameterCount))
-                .orElseThrow(() -> new RuntimeException("Нету ни одного конструктора!"));
-
-        return from(getProperty, constructor);
+    private static <T> T from(Function<String, String> getProperty, Class<T> tClass) {
+        return from(getProperty, getMaxArgsCountConstructor(tClass));
     }
 
     @NotNull
     @SneakyThrows
-    static <T> T from(Function<String, String> getProperty, Constructor<T> constructor) {
-        Object[] paramValues = Arrays.stream(constructor.getParameters())
-                .map(parameter -> resolveParameter(parameter, getProperty))
-                .toArray();
-
-        return constructor.newInstance(paramValues);
+    private static <T> T from(Function<String, String> getProperty,
+                              @NotNull Constructor<T> constructor) {
+        return constructor.newInstance(
+                Arrays.stream(constructor.getParameters())
+                        .map(parameter -> resolveParameter(getProperty,
+                                parameter.getType(),
+                                parameter.getName()))
+                        .toArray());
     }
 
-    private static Object resolveParameter(Parameter parameter,
-                                           Function<String, String> getProperty) {
-        return resolveParameter(getProperty, parameter.getType(), parameter.getName());
+    @SneakyThrows
+    private static Function<String, String> parseProperties(String propertiesFileName) {
+        val properties = new Properties();
+        @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(
+                String.format("/%s.properties", propertiesFileName));
+        properties.load(inputStream);
+        return properties::getProperty;
+    }
+
+    @NotNull
+    private static <T> Constructor<T> getMaxArgsCountConstructor(Class<T> tClass) {
+        //noinspection unchecked
+        return (Constructor<T>) Arrays.stream(tClass.getConstructors())
+                .max(Comparator.comparingInt(Constructor::getParameterCount))
+                .orElseThrow(() -> new RuntimeException("Нету ни одного конструктора!"));
     }
 
     private static <T> T resolveParameter(Function<String, String> getProperty,
-                                  Class<T> parameterType,
-                                  String name) {
+                                          Class<T> parameterType,
+                                          String name) {
 
         if (parameterType == String.class)
             //noinspection unchecked
@@ -89,9 +101,9 @@ public interface PropsBinder {
     }
 
     @NotNull
-    static <T> T resolveObjectParameter(Function<String, String> getProperty,
-                                         Class<T> type,
-                                         String prefix) {
+    private static <T> T resolveObjectParameter(Function<String, String> getProperty,
+                                                Class<T> type,
+                                                String prefix) {
         //noinspection AssertionCanBeIf
         if (type.isInterface() || Modifier.isAbstract(type.getModifiers()))
             throw new PropsBinderException("Type must not be an interface or abstract class!");

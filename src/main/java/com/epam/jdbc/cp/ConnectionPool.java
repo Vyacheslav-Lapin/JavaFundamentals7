@@ -1,7 +1,7 @@
 package com.epam.jdbc.cp;
 
 import com.epam.fp.CheckedFunction3;
-import com.epam.io.PropsBinder;
+import com.epam.io.properties.PropsBinder;
 import io.vavr.CheckedFunction1;
 import io.vavr.Function0;
 import io.vavr.Function1;
@@ -85,7 +85,7 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
         val path = String.format("/%s/%s.sql", initScriptsPath, name);
 
         Function<Path, String> read =
-                CheckedFunction1.<Path, String>narrow(filePath -> {
+                CheckedFunction1.<Path, String>of(filePath -> {
                     @Cleanup Stream<String> lines = Files.lines(filePath);
                     return lines.collect(Collectors.joining());
                 }).unchecked();
