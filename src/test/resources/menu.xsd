@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://epam.com/spb/jf/7"
+        xmlns:tns="http://epam.com/spb/jf/7">
+
+    <element name="breakfast-menu">
+        <complexType>
+            <sequence>
+                <element name="food" type="tns:Food" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="Food">
+        <sequence>
+            <element name="name" type="string"/>
+            <element name="price">
+                <simpleType>
+                    <restriction base="NCName">
+                        <pattern value="\$([\d.])+"/>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element name="description" type="string"/>
+            <element name="calories" type="int"/>
+        </sequence>
+        <attribute name="id" type="int" use="required"/>
+    </complexType>
+
+</schema>
