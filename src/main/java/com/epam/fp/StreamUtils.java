@@ -1,8 +1,5 @@
 package com.epam.fp;
 
-import checkers.units.quals.K;
-import io.vavr.CheckedFunction1;
-import io.vavr.Function1;
 import lombok.SneakyThrows;
 
 import java.sql.ResultSet;

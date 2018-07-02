@@ -1,6 +1,5 @@
 package com.epam.fp;
 
-import checkers.units.quals.K;
 import lombok.experimental.FieldDefaults;
 
 import java.util.EnumSet;
@@ -12,7 +11,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 

@@ -1,13 +1,16 @@
 package com.epam.jdbc.cp;
 
+import com.epam.fp.CheckedFunction3;
 import com.epam.io.PropsBinder;
 import io.vavr.CheckedFunction1;
+import io.vavr.Function0;
 import io.vavr.Function1;
 import io.vavr.Function2;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -33,24 +37,30 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
     final BlockingQueue<PooledConnection> freeConnections;
     volatile boolean isOpened = true;
 
-    public ConnectionPool() {
-        val jdbcProperties = PropsBinder.from("jdbc", JdbcProperties.class);
+    @SuppressWarnings("unused")
+    public ConnectionPool(String url, String user, String password, int poolSize, String sqlFolder) {
+        this(
+                CheckedFunction3
+                        .<String, String, String, Connection>of(DriverManager::getConnection)
+                        .supply(url, user, password),
+                poolSize,
+                sqlFolder);
+    }
 
-        int poolSize = jdbcProperties.getPoolSize();
+    private ConnectionPool(Function0<Connection> connectionCreator, int poolSize, String sqlFolder) {
 
-        Function<Connection, PooledConnection> pooledConnectionCreator =
-                Function2.of(PooledConnection::new)
-                        .apply(this::closer);
+        Supplier<PooledConnection> pooledConnectionCreator = connectionCreator
+                .andThen(Function2.of(PooledConnection::new)
+                        .apply(this::closer));
 
         freeConnections = IntStream.iterate(0, operand -> operand + 1)
                 .limit(poolSize)
-                .mapToObj(__ -> jdbcProperties.get())
-                .map(pooledConnectionCreator)
+                .mapToObj(__ -> pooledConnectionCreator.get())
                 .collect(Collectors.toCollection(() -> new ArrayBlockingQueue<>(poolSize)));
 
         Function1<String, Optional<String>> getFileAsString =
-                Function2.narrow(ConnectionPool::getFileAsString)
-                        .apply(jdbcProperties.getSqlFolder());
+                Function2.narrow(ConnectionPool::getSqlFileAsString)
+                        .apply(sqlFolder);
 
         execute(IntStream.iterate(1, operand -> operand + 1)
                 .mapToObj(String::valueOf)
@@ -60,8 +70,18 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
                 .collect(Collectors.joining()));
     }
 
+    @NotNull
+    public static ConnectionPool fromProps() {
+        return fromProps("jdbc");
+    }
+
+    @NotNull
+    public static ConnectionPool fromProps(String jdbc) {
+        return PropsBinder.from(jdbc, ConnectionPool.class);
+    }
+
     @SneakyThrows
-    private static Optional<String> getFileAsString(String initScriptsPath, String name) {
+    private static Optional<String> getSqlFileAsString(String initScriptsPath, String name) {
         val path = String.format("/%s/%s.sql", initScriptsPath, name);
 
         Function<Path, String> read =

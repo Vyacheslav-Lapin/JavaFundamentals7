@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 class StudentDaoTest {
 
-    static ConnectionPool connectionPool = new ConnectionPool();
+    static ConnectionPool connectionPool = ConnectionPool.fromProps("jdbc");
     static StudentDao studentDao = connectionPool::get;
     Student vasyaPupkin = studentDao.save(new Student("Vasya Pupkin", 1));
 
