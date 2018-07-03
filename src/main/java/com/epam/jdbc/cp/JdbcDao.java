@@ -1,9 +1,12 @@
 package com.epam.jdbc.cp;
 
 import lombok.Cleanup;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface JdbcDao<T extends Identifiable<T>> {
@@ -14,13 +17,23 @@ public interface JdbcDao<T extends Identifiable<T>> {
     @NotNull
     default <U extends T> Optional<U> findById(long id) {
         //noinspection unchecked
-        @Cleanup Stream<T> all = findAll();
-        return (Optional<U>) all.filter(t -> t.getId() == id)
-                .findAny();
+        return (Optional<U>) mapAll(all -> all
+                .filter(t -> t.getId() == id)
+                .findAny());
     }
 
     @NotNull
     <U extends T> Stream<U> findAll();
+
+    default <R> R mapAll(Function<Stream<T>,R> mapper) {
+        @Cleanup val stream = findAll();
+        return mapper.apply(stream);
+    }
+
+    default void withAll(Consumer<Stream<T>> mapper) {
+        @Cleanup val stream = findAll();
+        mapper.accept(stream);
+    }
 
     @NotNull
     <U extends T> U update(@NotNull U t);
@@ -30,14 +43,12 @@ public interface JdbcDao<T extends Identifiable<T>> {
 
     @NotNull
     default JdbcDao<T> clear() {
-        @Cleanup Stream<T> all = findAll();
-        all.forEach(this::delete);
-        //noinspection unchecked
+        withAll(all -> all.forEach(this::delete));
         return this;
     }
 
     default long count() {
-        return findAll().count();
+        return mapAll(Stream::count);
     }
 
     default boolean existsById(long id) {

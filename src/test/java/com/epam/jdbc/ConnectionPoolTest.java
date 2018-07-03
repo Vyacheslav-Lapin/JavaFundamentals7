@@ -26,7 +26,7 @@ class ConnectionPoolTest {
     @SneakyThrows
     @DisplayName("ConnectionPool works correctly")
     void testGet() {
-        @Cleanup val connection = ConnectionPool.fromProps("jdbc").get();
+        @Cleanup val connection = ConnectionPool.fromProps().get();
         @Cleanup val statement = connection.createStatement();
         @Cleanup val resultSet = statement.executeQuery(GET_STUDENTS_SQL);
         assertTrue(resultSet.next());

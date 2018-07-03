@@ -1,0 +1,16 @@
+package com.epam.fp;
+
+import java.util.Arrays;
+import java.util.function.Predicate;
+
+public interface Predicates {
+
+    static <T> Predicate<T> exact(T value) {
+        return obj -> obj == value;
+    }
+
+    static <T> Predicate<T> exactAny(T... values) {
+        return obj -> Arrays.stream(values)
+                .anyMatch(value -> obj == value);
+    }
+}

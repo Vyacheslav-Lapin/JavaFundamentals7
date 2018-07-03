@@ -57,7 +57,7 @@ public interface StudentDao extends JdbcDao<Student>, Supplier<Connection> {
         ps.executeUpdate();
         @Cleanup ResultSet rs = ps.getGeneratedKeys();
         if (!rs.next())
-            throw new RuntimeException("");
+            throw new RuntimeException("Не был сгенерирован ключ!");
 
         //noinspection unchecked
         return student.setId(rs.getInt(1));

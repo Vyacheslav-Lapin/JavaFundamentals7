@@ -1,0 +1,26 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.epam.tc.com/notes"
+        elementFormDefault="qualified"
+        xmlns:tns="http://www.epam.tc.com/notes"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.w3.org/2001/XMLSchema
+            http://www.w3.org/2001/XMLSchema.xsd">
+    <element name="notes">
+        <complexType>
+            <sequence>
+                <element name="note" type="tns:Note" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="Note">
+        <sequence>
+            <element name="to" type="token"/>
+            <element name="from" type="token"/>
+            <element name="heading" type="token"/>
+            <element name="body" type="string"/>
+        </sequence>
+        <attribute name="id" type="int"/>
+    </complexType>
+</schema>

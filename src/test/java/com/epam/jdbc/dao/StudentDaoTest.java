@@ -40,8 +40,7 @@ class StudentDaoTest {
     @Test
     @DisplayName("FindAll method works correctly")
     void testFindAll() {
-        @Cleanup Stream<Student> all = STUDENT_DAO.findAll();
-        assertThat(all.count(), is(INITIAL_COUNT + 1));
+        assertThat(STUDENT_DAO.mapAll(Stream::count), is(INITIAL_COUNT + 1));
         STUDENT_DAO.delete(vasyaPupkin);
     }
 
