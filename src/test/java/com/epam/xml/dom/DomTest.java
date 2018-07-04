@@ -1,7 +1,7 @@
 package com.epam.xml.dom;
 
+import com.epam.io.InputStreamUtils;
 import com.epam.xml.Food;
-import com.epam.xml.InputStreamUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.DisplayName;
