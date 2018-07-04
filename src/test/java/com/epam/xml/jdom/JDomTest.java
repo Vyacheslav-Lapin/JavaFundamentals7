@@ -6,7 +6,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.val;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +21,7 @@ import static org.jdom2.Namespace.getNamespace;
 public class JDomTest {
 
     public static final String FILE_NAME = "src/test/resources/menu.xml";
+    public static final String NEW_MENU_FILE_NAME = "src/test/resources/newmenu.xml";
 
     @Test
     @SneakyThrows
@@ -52,5 +52,25 @@ public class JDomTest {
 
         @Cleanup val fileOutputStream = new FileOutputStream(FILE_NAME);
         new XMLOutputter().output(document, fileOutputStream);
+    }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("\"Create\" works correctly")
+    void testCreate() {
+        Element root = new Element("breakfast-menu");
+
+        Element food = new Element("food");
+        food.setAttribute("id", "123");
+
+        Element name = new Element("name");
+        name.setText("Waffles");
+
+        food.addContent(name);
+        root.addContent(food);
+
+        @Cleanup FileOutputStream out = new FileOutputStream(NEW_MENU_FILE_NAME);
+        new XMLOutputter().output(new Document(root), out);
+
     }
 }
