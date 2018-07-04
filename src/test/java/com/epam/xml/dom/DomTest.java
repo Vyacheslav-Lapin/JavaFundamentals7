@@ -12,8 +12,12 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +31,7 @@ public class DomTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("\"Name\" method works correctly")
+    @DisplayName("\"Read\" works correctly")
     void testName() {
 
         Element root = mapFileInputStream("menu.xml",
@@ -53,4 +57,30 @@ public class DomTest {
         return (Element) element.getElementsByTagName(childName).item(0);
     }
 
+
+    @Test
+    @SneakyThrows
+    @DisplayName("\"Write\" works correctly")
+    void testWrite() {
+        Document document = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder()
+                .newDocument();
+
+        Element breakfastMenu = document.createElement("breakfast-menu");
+        Element food = document.createElement("food");
+        food.setAttribute("id", "234");
+
+        Element name = document.createElement("name");
+        name.setTextContent("Waffles");
+
+        food.appendChild(name);
+        breakfastMenu.appendChild(food);
+        document.appendChild(breakfastMenu);
+
+        TransformerFactory.newInstance()
+                .newTransformer()
+                .transform(
+                        new DOMSource(document),
+                        new StreamResult(new FileWriter("src/test/resources/dommenu.xml")));
+    }
 }
