@@ -32,12 +32,6 @@ public class Point {
     @Singular
     List<Long> numbers;
 
-
-    static int getFive() {
-        main(null);
-        return 5;
-    }
-
     @SneakyThrows
     public static void main(String... args) {
         MyAnnotation myAnnotation = Point.class.getDeclaredAnnotation(MyAnnotation.class);

@@ -9,6 +9,7 @@ public interface Predicates {
         return obj -> obj == value;
     }
 
+    @SafeVarargs
     static <T> Predicate<T> exactAny(T... values) {
         return obj -> Arrays.stream(values)
                 .anyMatch(value -> obj == value);
