@@ -27,20 +27,4 @@ public interface TestUtils {
 
         return new String(out.toByteArray()).intern();
     }
-
-    @SneakyThrows
-    static <T> T mapFileInputStream(String fileName,
-                                    Function<InputStream, T> fisMapper) {
-        @Cleanup val inputStream = TestUtils.class
-                .getResourceAsStream("/" + fileName);
-        return fisMapper.apply(inputStream);
-    }
-
-    @SneakyThrows
-    static void withFileInputStream(String fileName,
-                                    Consumer<InputStream> fisConsumer) {
-        @Cleanup val inputStream = TestUtils.class
-                .getResourceAsStream("/" + fileName);
-        fisConsumer.accept(inputStream);
-    }
 }

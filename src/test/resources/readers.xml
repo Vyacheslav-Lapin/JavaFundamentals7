@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<readers xmlns:reader="http://www.zyx.com/readers"
+         xmlns:address="http://www.xyz.com/addresses"
+         xmlns:books="http://www.zyx.com/books">
+    <reader:book-order>
+        <address:full-address>
+            <title>Mrs.</title>
+            <name>Ivales</name>
+        </address:full-address>
+        <books:title>Lord of the Rings</books:title>
+    </reader:book-order>
+</readers>

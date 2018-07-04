@@ -13,7 +13,7 @@
 			<element name="price">
 				<simpleType>
 					<restriction base="string">
-						<pattern value=".\d[\d\.]*"/>
+						<pattern value=".\d[\d.]*"/>
 					</restriction>
 				</simpleType>
 			</element>

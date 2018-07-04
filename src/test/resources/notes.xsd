@@ -1,7 +1,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         targetNamespace="http://www.epam.tc.com/notes"
+        xmlns:tns=      "http://www.epam.tc.com/notes"
         elementFormDefault="qualified"
-        xmlns:tns="http://www.epam.tc.com/notes"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
             http://www.w3.org/2001/XMLSchema
@@ -9,7 +9,8 @@
     <element name="notes">
         <complexType>
             <sequence>
-                <element name="note" type="tns:Note" maxOccurs="unbounded"/>
+                <element name="note" type="tns:Note"
+                         maxOccurs="unbounded"/>
             </sequence>
         </complexType>
     </element>
@@ -21,6 +22,6 @@
             <element name="heading" type="token"/>
             <element name="body" type="string"/>
         </sequence>
-        <attribute name="id" type="int"/>
+        <attribute name="id" type="int" use="required"/>
     </complexType>
 </schema>

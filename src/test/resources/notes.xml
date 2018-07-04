@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- комментарий -->
-<nt:notes xmlns:nt="http://www.epam.tc.com/notes"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.epam.tc.com/notes notes.xsd">
-    <nt:note id="1">
-        <nt:to>Вася</nt:to>
-        <nt:from>Света</nt:from>
-        <nt:heading>Напоминание</nt:heading>
-        <nt:body>Позвони мне завтра!</nt:body>
-    </nt:note>
-</nt:notes>
+<!-- С помощью схемы XSD можно также проверить документ на корректность -->
+<notes xmlns="http://www.epam.tc.com/notes"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.epam.tc.com/notes notes.xsd">
+    <note id="1">
+        <to>Вася</to>
+        <from>Света</from>
+        <heading>Напоминание</heading>
+        <body>Позвони мне завтра!</body>
+    </note>
+</notes>

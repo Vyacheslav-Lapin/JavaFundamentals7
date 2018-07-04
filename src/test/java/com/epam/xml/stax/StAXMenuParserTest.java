@@ -27,11 +27,11 @@ class StAXMenuParserTest {
     @SneakyThrows
     @DisplayName("\"Process\" method works correctly")
     void testProcess() {
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         @Cleanup InputStream input = StAXMenuParserTest.class
                 .getResourceAsStream("/menu.xml");
 
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(input);
+        XMLStreamReader reader = XMLInputFactory.newInstance()
+                .createXMLStreamReader(input);
 
         assertThat(extractMenu(reader).size(), is(2));
     }

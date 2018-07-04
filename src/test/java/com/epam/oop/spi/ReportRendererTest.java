@@ -15,5 +15,6 @@ class ReportRendererTest {
     void testGenerateReport() {
         assertThat(fromSystemOut(ReportRenderer.getInstance()::generateReport),
                 is(not(emptyString())));
+
     }
 }

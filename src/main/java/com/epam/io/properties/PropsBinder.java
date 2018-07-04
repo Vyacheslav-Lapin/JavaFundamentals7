@@ -3,7 +3,6 @@ package com.epam.io.properties;
 import io.vavr.API;
 import io.vavr.Function0;
 import io.vavr.Function1;
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +14,9 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.function.Function;
 
+import static com.epam.fp.Predicates.exact;
+import static com.epam.fp.Predicates.exactAny;
+import static com.epam.io.InputStreamUtils.withFileInputStream;
 import static io.vavr.API.*;
 import static io.vavr.Predicates.is;
 import static io.vavr.Predicates.isIn;
@@ -58,9 +60,7 @@ public interface PropsBinder {
     @SneakyThrows
     private static Function1<String, String> parseProperties(String propertiesFileName) {
         val properties = new Properties();
-        @Cleanup val inputStream = PropsBinder.class.getResourceAsStream(
-                String.format("/%s.properties", propertiesFileName));
-        properties.load(inputStream);
+        withFileInputStream(propertiesFileName + ".properties", properties::load);
         return properties::getProperty;
     }
 
@@ -80,15 +80,15 @@ public interface PropsBinder {
 
         //noinspection unchecked
         return (T) Match(parameterType).of(
-                Case(API.<Class<T>>$(is(String.class)), p),
-                Case(API.<Class<T>>$(isIn(int.class, Integer.class)), p.andThen(Integer::valueOf)),
-                Case(API.<Class<T>>$(isIn(double.class, Double.class)), p.andThen(Double::valueOf)),
-                Case(API.<Class<T>>$(isIn(long.class, Long.class)), p.andThen(Long::valueOf)),
-                Case(API.<Class<T>>$(isIn(boolean.class, Boolean.class)), p.andThen(Boolean::valueOf)),
-                Case(API.<Class<T>>$(isIn(float.class, Float.class)), p.andThen(Float::valueOf)),
-                Case(API.<Class<T>>$(isIn(char.class, Character.class)), p.andThen(s -> s.charAt(0)).andThen(Character::valueOf)),
-                Case(API.<Class<T>>$(isIn(byte.class, Byte.class)), p.andThen(Byte::valueOf)),
-                Case(API.<Class<T>>$(isIn(short.class, Short.class)), p.andThen(Short::valueOf)),
+                Case(API.<Class<T>>$(exact(String.class)), p),
+                Case(API.<Class<T>>$(exactAny(int.class, Integer.class)), p.andThen(Integer::valueOf)),
+                Case(API.<Class<T>>$(exactAny(double.class, Double.class)), p.andThen(Double::valueOf)),
+                Case(API.<Class<T>>$(exactAny(long.class, Long.class)), p.andThen(Long::valueOf)),
+                Case(API.<Class<T>>$(exactAny(boolean.class, Boolean.class)), p.andThen(Boolean::valueOf)),
+                Case(API.<Class<T>>$(exactAny(float.class, Float.class)), p.andThen(Float::valueOf)),
+                Case(API.<Class<T>>$(exactAny(char.class, Character.class)), p.andThen(s -> s.charAt(0)).andThen(Character::valueOf)),
+                Case(API.<Class<T>>$(exactAny(byte.class, Byte.class)), p.andThen(Byte::valueOf)),
+                Case(API.<Class<T>>$(exactAny(short.class, Short.class)), p.andThen(Short::valueOf)),
                 Case($(), () -> resolveObjectParameter(getProperty, parameterType, name))
         );
     }
