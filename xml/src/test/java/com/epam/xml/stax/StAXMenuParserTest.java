@@ -1,6 +1,5 @@
 package com.epam.xml.stax;
 
-import com.epam.xml.Food;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
@@ -10,9 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.List;
 
 import static com.epam.xml.stax.StAXMenuParser.extractMenu;
 import static lombok.AccessLevel.PRIVATE;

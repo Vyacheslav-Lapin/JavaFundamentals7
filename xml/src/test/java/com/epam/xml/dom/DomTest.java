@@ -1,27 +1,23 @@
 package com.epam.xml.dom;
 
 import com.epam.xml.Food;
+import com.epam.xml.InputStreamUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.io.InputStreamUtils.mapFileInputStream;
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -34,7 +30,7 @@ public class DomTest {
     @DisplayName("\"Read\" works correctly")
     void testName() {
 
-        Element root = mapFileInputStream("menu.xml",
+        Element root = InputStreamUtils.mapFileInputStream("menu.xml",
                 DocumentBuilderFactory.newInstance().newDocumentBuilder()::parse)
                 .getDocumentElement();
 

@@ -10,9 +10,7 @@ import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,7 +23,7 @@ class MenuSaxHandlerTest {
     @SneakyThrows
     @DisplayName("\"GetFoodList\" method works correctly")
     void testGetFoodList() {
-        XMLReader reader = SAXParserFactory.newDefaultInstance()
+        XMLReader reader = SAXParserFactory.newInstance()
                 .newSAXParser()
                 .getXMLReader();
 

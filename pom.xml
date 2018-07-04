@@ -9,7 +9,10 @@
     <groupId>com.epam.jf</groupId>
     <artifactId>JavaFundamentals7</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>xml</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,6 +36,13 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
             <version>LATEST</version>
+        </dependency>
+
+        <!-- JAXB (for JSE 9+ only!) -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.12</version>
         </dependency>
 
         <!-- H2 -->
@@ -135,110 +145,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
-            <!-- SUREFIRE (compatible with JUnit 5+, Java 9+, Lombok) -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
-                <configuration>
-                    <argLine>--add-modules java.se.ee</argLine>
-                    <includes>
-                        <include>**/Test*.java</include>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                        <include>**/*TestCase.java</include>
-                    </includes>
-                    <properties>
-                        <!--<includeTags>fast</includeTags>-->
-                        <excludeTags>slow</excludeTags>
-                        <!--<configurationParameters>-->
-                        <!--junit.jupiter.conditions.deactivate = *-->
-                        <!--</configurationParameters>-->
-                    </properties>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit.platform.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- CODE COVERAGE (JaCoCo) -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.0</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Property containing settings for JaCoCo runtime agent -->
-                            <propertyName>surefireArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <!-- Ensures unit test coverage report is created after running tests -->
-                    <execution>
-                        <id>post-unit-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <!-- Property for JaCoCo runtime agent, passed to Failsafe plugin -->
-                    <execution>
-                        <id>pre-integration-test</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <propertyName>failsafeArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>post-integration-test</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- LOMBOK -->
-            <!--<plugin>-->
-                <!--<groupId>org.projectlombok</groupId>-->
-                <!--<artifactId>lombok-maven-plugin</artifactId>-->
-                <!--<version>1.16.22.0</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>generate-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>delombok</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<addOutputDirectory>false</addOutputDirectory>-->
-                            <!--<sourceDirectory>src/main/java</sourceDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                        <!--<id>test-delombok</id>-->
-                        <!--<phase>generate-test-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>testDelombok</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<addOutputDirectory>false</addOutputDirectory>-->
-                            <!--<sourceDirectory>src/test/java</sourceDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
 
         </plugins>
     </build>
