@@ -80,7 +80,9 @@ class JDomTest {
 
         //when
         {
-            Document document = new SAXBuilder().build(testResourceFilePath);
+            Document document = mapFileInputStream(FILE_NAME, inputStream ->
+                    new SAXBuilder().build(inputStream));
+
             Element name = getFoodNameById(document, "1");
             text = name.getText();
             assertThat(text, is("Belgian Waffles"));
