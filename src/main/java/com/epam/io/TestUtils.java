@@ -12,6 +12,8 @@ import java.util.function.Function;
 
 public interface TestUtils {
 
+    String TEST_RESOURCES_PATH = "./src/test/resources/";
+
     @SneakyThrows
     static String fromSystemOut(Runnable task) {
 
@@ -26,5 +28,9 @@ public interface TestUtils {
         System.setOut(realOut);
 
         return new String(out.toByteArray()).intern();
+    }
+
+    static String toTestResourceFilePath(String fileName) {
+        return TEST_RESOURCES_PATH + fileName;
     }
 }

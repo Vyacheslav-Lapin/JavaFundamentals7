@@ -1,15 +1,22 @@
 package com.epam.fp;
 
+import lombok.SneakyThrows;
+
 import java.util.function.Consumer;
 
 import static com.epam.fp.Exceptional.sneakyThrow;
-
 
 @FunctionalInterface
 public interface CheckedConsumer<T> extends io.vavr.CheckedConsumer<T> {
 
     static <T> CheckedConsumer<T> narrow(CheckedConsumer<T> consumer) {
         return consumer;
+    }
+
+    @SneakyThrows
+    static <T> T doWith(T obj, CheckedConsumer<T> consumer) {
+        consumer.accept(obj);
+        return obj;
     }
 
     /**
