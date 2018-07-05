@@ -86,9 +86,15 @@
             <version>2.0.6</version>
         </dependency>
 
+        <!--JAX-WS-->
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.xml.ws</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
             <version>LATEST</version>
         </dependency>
 
@@ -182,7 +188,7 @@
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.3.0-M1</version>
+                        <version>${junit.platform.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

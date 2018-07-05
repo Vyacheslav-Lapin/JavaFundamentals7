@@ -92,7 +92,7 @@ class JDomTest {
             }
         }
 
-//        Thread.sleep(10_000);
+        Thread.sleep(10_000);
 
         //then
         String nameText = mapFileInputStream(FILE_NAME, inputStream ->
