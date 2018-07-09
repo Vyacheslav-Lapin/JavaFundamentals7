@@ -1,0 +1,10 @@
+GET http://localhost:8080/ HTTP/1.1
+Host: localhost
+
+###
+POST http://localhost:8080/Controller HTTP/1.1
+Host: localhost
+
+name=Peter&dob=1988-04-22
+
+###
