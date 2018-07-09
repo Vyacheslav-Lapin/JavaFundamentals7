@@ -104,6 +104,26 @@
             <version>10.0-b28</version>
         </dependency>
 
+        <!--Tomcat-->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-api</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jsp-api</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- TEST (JUnit 5 & Mockito) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -122,6 +142,11 @@
             <artifactId>mockito-all</artifactId>
             <version>LATEST</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>9.0.10</version>
         </dependency>
 
     </dependencies>
