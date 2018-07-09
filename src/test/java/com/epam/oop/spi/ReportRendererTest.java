@@ -13,7 +13,9 @@ class ReportRendererTest {
     @Test
     @DisplayName("GenerateReport method works correctly")
     void testGenerateReport() {
-        assertThat(fromSystemOut(ReportRenderer.getInstance()::generateReport),
+        assertThat(
+                fromSystemOut(
+                        ReportRenderer.getInstance()::generateReport),
                 is(not(emptyString())));
 
     }

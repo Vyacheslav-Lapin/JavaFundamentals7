@@ -19,6 +19,14 @@ public interface CheckedConsumer<T> extends io.vavr.CheckedConsumer<T> {
         return obj;
     }
 
+    @SneakyThrows
+    static <T extends AutoCloseable> void doWithAndCleanup(T obj,
+                                                           CheckedConsumer<T> cns) {
+        try (obj) {
+            cns.accept(obj);
+        }
+    }
+
     /**
      * Returns an unchecked consumer that will <em>sneaky throw</em> if an exceptions occurs when applying the function.
      *
@@ -28,7 +36,7 @@ public interface CheckedConsumer<T> extends io.vavr.CheckedConsumer<T> {
         return value -> {
             try {
                 accept(value);
-            } catch(Throwable t) {
+            } catch (Throwable t) {
                 sneakyThrow(t);
             }
         };

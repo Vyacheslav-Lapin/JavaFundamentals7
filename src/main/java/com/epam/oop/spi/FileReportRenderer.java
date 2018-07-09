@@ -12,7 +12,7 @@ import static lombok.AccessLevel.PACKAGE;
 @FieldDefaults(level = PACKAGE, makeFinal = true)
 public class FileReportRenderer extends ReportRenderer {
 
-    static String FILE_NAME = "./src/music.txt";
+    static String FILE_NAME = "./src/test/resources/music.txt";
 
     @Override
     @SneakyThrows
