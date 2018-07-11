@@ -15,15 +15,14 @@ public class PipedExample {
 
     @SneakyThrows
     public static void main(String... args) {
-        @Cleanup val pipedInputStream = new PipedInputStream();
-        @Cleanup val pipedOutputStream = new PipedOutputStream(pipedInputStream);
+        @Cleanup val in = new PipedInputStream();
+        @Cleanup val out = new PipedOutputStream(in);
 
         for (int i = 0; i < 20;)
-            pipedOutputStream.write(i++);
+            out.write(i++);
 
-        for (int toRead[] = new int[pipedInputStream.available()],
-             i = 0; i < toRead.length; i++) {
-            toRead[i] = pipedInputStream.read();
+        for (int toRead[] = new int[in.available()], i = 0; i < toRead.length; i++) {
+            toRead[i] = in.read();
             System.out.print(toRead[i] + " ");
         }
     }

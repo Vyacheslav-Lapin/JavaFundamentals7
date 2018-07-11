@@ -11,14 +11,16 @@ import static lombok.AccessLevel.PRIVATE;
 public class TreeSetExample {
 
     public static void main(String... args) {
-        Map<String, Integer> linkedHashMap = new LinkedHashMap<>
-                (16, 0.75f);
-        linkedHashMap.put("Smith", 30);
-        linkedHashMap.put("Anderson", 31);
-        linkedHashMap.put("Lewis", 29);
-        linkedHashMap.put("Cook", 29);
-        System.out.println("\nThe age for " + "Lewis is "
-                + linkedHashMap.get("Lewis").intValue());
-        System.out.println(linkedHashMap);
+        Map<String, Integer> personAges = new LinkedHashMap<>(
+                16,
+                0.75f);
+
+        personAges.put("Smith", 30);
+        personAges.put("Anderson", 31);
+        personAges.put("Lewis", 29);
+        personAges.put("Cook", 29);
+
+        System.out.println("The age for Lewis is " + personAges.get("Lewis"));
+        System.out.println(personAges);
     }
 }

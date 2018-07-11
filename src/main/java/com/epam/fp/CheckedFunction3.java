@@ -1,8 +1,10 @@
 package com.epam.fp;
 
 import io.vavr.Function0;
+import org.jetbrains.annotations.Contract;
 
 public interface CheckedFunction3<T1, T2, T3, R> extends io.vavr.CheckedFunction3<T1, T2, T3, R> {
+    @Contract(value = "_ -> param1", pure = true)
     static <T1, T2, T3, R> CheckedFunction3<T1, T2, T3, R> of(CheckedFunction3<T1, T2, T3, R> cf3) {
         return cf3;
     }

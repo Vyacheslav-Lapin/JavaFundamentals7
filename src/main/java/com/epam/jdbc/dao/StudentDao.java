@@ -75,9 +75,9 @@ public interface StudentDao extends JdbcDao<Student>, Supplier<Connection> {
         val resultSet = statement.executeQuery(GET_ALL_SQL);
         //noinspection unchecked
         return StreamUtils.toStream(resultSet, ID_ROW_MAPPER)
-                .onClose(CheckedRunnable.narrow(resultSet::close).unchecked())
-                .onClose(CheckedRunnable.narrow(statement::close).unchecked())
-                .onClose(CheckedRunnable.narrow(connection::close).unchecked());
+                .onClose(CheckedRunnable.of(resultSet::close).unchecked())
+                .onClose(CheckedRunnable.of(statement::close).unchecked())
+                .onClose(CheckedRunnable.of(connection::close).unchecked());
     }
 
     @NotNull

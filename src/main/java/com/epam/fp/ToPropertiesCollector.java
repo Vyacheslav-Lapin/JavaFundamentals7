@@ -15,7 +15,8 @@ import java.util.stream.Collector;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-public class ToPropertiesCollector<K, V> implements Collector<Map.Entry<K, V>, Properties, Properties> {
+public class ToPropertiesCollector<K, V> implements
+        Collector<Map.Entry<K, V>, Properties, Properties> {
 
     @Override
     public Supplier<Properties> supplier() {

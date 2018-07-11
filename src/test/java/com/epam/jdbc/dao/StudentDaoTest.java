@@ -3,7 +3,6 @@ package com.epam.jdbc.dao;
 import com.epam.fp.CheckedRunnable;
 import com.epam.jdbc.cp.ConnectionPool;
 import com.epam.jdbc.model.Student;
-import lombok.Cleanup;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.*;
 
@@ -48,12 +47,12 @@ class StudentDaoTest {
     @DisplayName("Update method works correctly")
     void testUpdate() {
         Student student1 = STUDENT_DAO.findById(vasyaPupkin.getId()).orElseThrow(() -> {
-            CheckedRunnable.narrow(Assertions::fail).unchecked();
+            CheckedRunnable.of(Assertions::fail).unchecked();
             return null;
         });
         STUDENT_DAO.update(student1.setGroupId(100500));
         Student student2 = STUDENT_DAO.findById(vasyaPupkin.getId()).orElseThrow(() -> {
-            CheckedRunnable.narrow(Assertions::fail).unchecked();
+            CheckedRunnable.of(Assertions::fail).unchecked();
             return null;
         });
         assertEquals(student2, student1);
@@ -64,7 +63,7 @@ class StudentDaoTest {
     void testDelete() {
         Student student = STUDENT_DAO.findById(vasyaPupkin.getId())
                 .orElseThrow(() -> {
-                    CheckedRunnable.narrow(Assertions::fail).unchecked();
+                    CheckedRunnable.of(Assertions::fail).unchecked();
                     return null;
                 });
 

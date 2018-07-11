@@ -1,18 +1,21 @@
 package com.epam.fp;
 
+import org.jetbrains.annotations.Contract;
+
 import static com.epam.fp.Exceptional.sneakyThrow;
 
 @FunctionalInterface
 public interface CheckedRunnable extends io.vavr.CheckedRunnable {
 
-    static CheckedRunnable narrow(CheckedRunnable checkedRunnable) {
+    @Contract(value = "_ -> param1", pure = true)
+    static CheckedRunnable of(CheckedRunnable checkedRunnable) {
         return checkedRunnable;
     }
 
     /**
      * Returns an unchecked function that will <em>sneaky throw</em> if an exceptions occurs when applying the function.
      *
-     * @return a new Function0 that throws a {@code Throwable}.
+     * @return a new Runnable, that throws a {@code Throwable} at runtime
      */
     default Runnable unchecked() {
         return () -> {
