@@ -14,16 +14,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileWriter;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.io.TestUtils.toTestResourceFilePath;
 import static lombok.AccessLevel.PRIVATE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-@FieldDefaults(level = PRIVATE)
+@FieldDefaults(level = PRIVATE, makeFinal = true)
 public class DomTest {
+
+    static File FILE = new File(toTestResourceFilePath("document.xml"));
 
     @Test
     @SneakyThrows
@@ -41,18 +44,17 @@ public class DomTest {
             Element foodElement = (Element) foodNodes.item(i);
             menu.add(new Food()
                     .setId(Integer.parseInt(foodElement.getAttribute("id")))
-                    .setName(getSingleChild(foodElement, "name").getTextContent().trim())
-                    .setPrice(getSingleChild(foodElement, "price").getTextContent().trim())
-                    .setDescription(getSingleChild(foodElement, "description").getTextContent().trim())
-                    .setCalories(Integer.parseInt(getSingleChild(foodElement, "calories").getTextContent().trim())));
+                    .setName(getFirstChildElement(foodElement, "name").getTextContent().trim())
+                    .setPrice(getFirstChildElement(foodElement, "price").getTextContent().trim())
+                    .setDescription(getFirstChildElement(foodElement, "description").getTextContent().trim())
+                    .setCalories(Integer.parseInt(getFirstChildElement(foodElement, "calories").getTextContent().trim())));
         }
         assertThat(menu.size(), is(2));
     }
 
-    private static Element getSingleChild(Element element, String childName){
+    private static Element getFirstChildElement(Element element, String childName){
         return (Element) element.getElementsByTagName(childName).item(0);
     }
-
 
     @Test
     @SneakyThrows
@@ -77,6 +79,6 @@ public class DomTest {
                 .newTransformer()
                 .transform(
                         new DOMSource(document),
-                        new StreamResult(new FileWriter("src/test/resources/dommenu.xml")));
+                        new StreamResult(FILE));
     }
 }
