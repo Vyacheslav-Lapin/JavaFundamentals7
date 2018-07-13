@@ -37,18 +37,6 @@ public class HelloService extends Service {
         super(HELLOSERVICE_WSDL_LOCATION, HELLOSERVICE_QNAME);
     }
 
-    public HelloService(WebServiceFeature... features) {
-        super(HELLOSERVICE_WSDL_LOCATION, HELLOSERVICE_QNAME, features);
-    }
-
-    public HelloService(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, HELLOSERVICE_QNAME, features);
-    }
-
-    public HelloService(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
-    }
-
     /**
      * 
      * @param features
