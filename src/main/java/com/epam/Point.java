@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.Wither;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
 import java.util.List;
 
 @Slf4j
@@ -12,49 +11,34 @@ import java.util.List;
 @Builder // @AllArgsConstructor(access = PRIVATE)
 @Data // @Getter //@Setter @ToString @EqualsAndHashCode @RequiredArgsConstructor
 //@Value //@Getter @ToString @EqualsAndHashCode @AllArgsConstructor @FieldDefaults(level = PRIVATE, makeFinal = true)
-@MyAnnotation("Мама мыла раму!")
 public class Point {
-    int x;
-
-    public int getX() {
-        return this.x;
-    }
-
-    //    @NonFinal
+  //    @NonFinal
 //    @Builder.Default
 //    int y = 80;
-    @Wither
-    final int y;
+  @Wither
+  final int y;
+  int x;
+  @Wither
+  int z;
+  @Singular
+  List<Long> numbers;
 
-    @Wither
-    int z;
+  @SneakyThrows
+  public static void main(String... args) {
 
-    @Singular
-    List<Long> numbers;
-
-    @SneakyThrows
-    public static void main(String... args) {
-        MyAnnotation myAnnotation = Point.class.getDeclaredAnnotation(MyAnnotation.class);
-        System.out.println(myAnnotation.value());
-
-        log.info("Мама мыла раму!");
-//
-//        //...
-//        connection.close();
-
-        val point = Point.builder()
-                .x(100)
-                .z(58)
+    val point = Point.builder()
+      .x(100)
+      .z(58)
 
 //                .numbers(Arrays.asList(1L,2L,3L,4L,5L))
-                .number(1L)
-                .number(2L)
-                .number(3L)
-                .number(4L)
-                .number(5L)
+      .number(1L)
+      .number(2L)
+      .number(3L)
+      .number(4L)
+      .number(5L)
 
-                .y(200)
-                .build();
+      .y(200)
+      .build();
 
 //        Point point59 = point.withZ(59).withY(201);
 
@@ -65,5 +49,9 @@ public class Point {
 //            System.out.println(parameter.getName());
 //        }
 
-    }
+  }
+
+  public int getX() {
+    return this.x;
+  }
 }

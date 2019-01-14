@@ -8,17 +8,17 @@ import java.util.function.Predicate;
 
 public interface Predicates {
 
-    @NotNull
-    @Contract(pure = true)
-    static <T> Predicate<T> exact(T value) {
-        return obj -> obj == value;
-    }
+  @NotNull
+  @Contract(pure = true)
+  static <T> Predicate<T> exact(T value) {
+    return obj -> obj == value;
+  }
 
-    @NotNull
-    @SafeVarargs
-    @Contract(pure = true)
-    static <T> Predicate<T> exactAny(T... values) {
-        return obj -> Arrays.stream(values)
-                .anyMatch(value -> obj == value);
-    }
+  @NotNull
+  @SafeVarargs
+  @Contract(pure = true)
+  static <T> Predicate<T> exactAny(T... values) {
+    return obj -> Arrays.stream(values)
+      .anyMatch(value -> obj == value);
+  }
 }

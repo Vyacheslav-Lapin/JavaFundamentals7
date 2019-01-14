@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public class GetHttpServlet extends HttpServlet {
 
-    @Override
-    protected void doPost(HttpServletRequest req,
-                          HttpServletResponse resp)
-            throws ServletException, IOException {
-        doGet(req, resp);
-    }
+  @Override
+  protected void doPost(HttpServletRequest req,
+                        HttpServletResponse resp)
+    throws ServletException, IOException {
+    doGet(req, resp);
+  }
 }

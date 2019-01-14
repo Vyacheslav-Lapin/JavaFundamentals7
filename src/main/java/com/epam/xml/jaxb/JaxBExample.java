@@ -1,47 +1,41 @@
 package com.epam.xml.jaxb;
 
-import com.epam.xml.Food;
+import com.epam.fp.CheckedFunction1;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.function.Function;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @UtilityClass
 @FieldDefaults(level = PRIVATE, makeFinal = true)
-public class JaxBExample {
+class JaxBExample {
 
-    JAXBContext context;
+  @SuppressWarnings("WeakerAccess")
+  Function<Class<?>, JAXBContext> GET_CONTEXT =
+    CheckedFunction1.<Class<?>, JAXBContext>of(JAXBContext::newInstance)
+      .unchecked()
+      .memoized();
 
-    static {
-        try {
-            context = JAXBContext.newInstance(Food.class);
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  @SneakyThrows
+  <T> T getBean(String fileName, Class<T> aClass) {
 
-    @SneakyThrows
-    public Food getFood(String fileName) {
-        Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
-        Food food = (Food) jaxbUnmarshaller.unmarshal(new File(fileName));
-        System.out.println(food.getName());
-        return food;
-    }
+    val unmarshaller = GET_CONTEXT.apply(aClass).createUnmarshaller();
+//        noinspection unchecked
+    return (T) unmarshaller.unmarshal(new File(fileName));
+  }
 
-    @SneakyThrows
-    public void setFood(String fileName, Food food) {
-        Marshaller m = context.createMarshaller();
-        @Cleanup FileOutputStream os = new FileOutputStream(fileName);
-        m.marshal(food, os);
-        m.marshal(food, System.out);// на консоль
-    }
+  @SneakyThrows
+  <T> void setBean(String fileName, T t) {
+    @Cleanup FileOutputStream os = new FileOutputStream(fileName);
+    val marshaller = GET_CONTEXT.apply(t.getClass()).createMarshaller();
+    marshaller.marshal(t, os);
+  }
 }

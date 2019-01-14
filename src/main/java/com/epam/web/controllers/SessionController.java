@@ -13,23 +13,23 @@ import java.util.stream.Collectors;
 @WebServlet("/SessionController")
 public class SessionController extends PostHttpServlet {
 
-    @Override
-    @SneakyThrows
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response) {
+  @Override
+  @SneakyThrows
+  protected void doPost(HttpServletRequest request,
+                        HttpServletResponse response) {
 
-        HttpSession session = request.getSession();
-        session.setAttribute(
-                request.getParameter("paramName"),
-                request.getParameter("paramValue"));
+    HttpSession session = request.getSession();
+    session.setAttribute(
+      request.getParameter("paramName"),
+      request.getParameter("paramValue"));
 
-        request.setAttribute("out",
-                StreamUtils.toStream(session.getAttributeNames().asIterator())
-                        .map(name -> Tuple.of(name, session.getAttribute(name)))
-                        .map(param -> String.format("%s - %s", param._1, param._2))
-                        .collect(Collectors.joining("<br/>")));
+    request.setAttribute("out",
+      StreamUtils.streamOf(session.getAttributeNames().asIterator())
+        .map(name -> Tuple.of(name, session.getAttribute(name)))
+        .map(param -> String.format("%s - %s", param._1, param._2))
+        .collect(Collectors.joining("<br/>")));
 
-        request.getRequestDispatcher("/session-demo.jsp")
-                .forward(request, response);
-    }
+    request.getRequestDispatcher("/session-demo.jsp")
+      .forward(request, response);
+  }
 }

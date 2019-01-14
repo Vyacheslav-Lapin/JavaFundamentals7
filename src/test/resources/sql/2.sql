@@ -1,2 +1,2 @@
-insert into students(name, group_id)
+insert into Student(name, groupId)
 values('Вася Пупкин', 123456);

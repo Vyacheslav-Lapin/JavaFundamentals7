@@ -6,11 +6,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 public interface Filter {
-    void destroy();
+  void destroy();
 
-    void doFilter(ServletRequest request, ServletResponse response,
-                  FilterChain chain);
+  void doFilter(ServletRequest request, ServletResponse response,
+                FilterChain chain);
 
-    void init(FilterConfig filterConfig);
+  void init(FilterConfig filterConfig);
 }
 

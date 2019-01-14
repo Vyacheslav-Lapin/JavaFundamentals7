@@ -11,22 +11,22 @@ import javax.xml.validation.SchemaFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ValidationTest {
+class ValidationTest {
 
-    @Test
-    @SneakyThrows
-    @DisplayName("\"Name\" method works correctly")
-    void testName() {
-        InputStreamUtils.withFileInputStream("notes.xml", inputStream -> {
-            try {
-                SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema")
-                        .newSchema(ValidationTest.class
-                                .getResource("/notes.xsd"))
-                        .newValidator()
-                        .validate(new StreamSource(inputStream));
-            } catch (SAXException ex) {
-                fail(ex.getMessage());
-            }
-        });
-    }
+  @Test
+  @SneakyThrows
+  @DisplayName("Validation via XSD works correctly")
+  void testXsdValidation() {
+    InputStreamUtils.withFileInputStream("notes.xml", inputStream -> {
+      try {
+        SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema")
+          .newSchema(ValidationTest.class
+            .getResource("/notes.xsd"))
+          .newValidator()
+          .validate(new StreamSource(inputStream));
+      } catch (SAXException ex) {
+        fail(ex.getMessage());
+      }
+    });
+  }
 }

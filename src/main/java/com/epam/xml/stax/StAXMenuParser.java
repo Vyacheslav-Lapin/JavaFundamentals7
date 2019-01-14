@@ -16,46 +16,52 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Log4j2
 @FieldDefaults(level = PRIVATE)
+@SuppressWarnings("WeakerAccess")
 public class StAXMenuParser {
 
-    public static List<Food> extractMenu(XMLStreamReader reader) throws XMLStreamException {
-        List<Food> menu = new ArrayList<>();
-        Food food = null;
-        MenuTagName elementName = null;
-        String text;
-        while (reader.hasNext())
-            // определение типа "прочтённого" элемента (тега)
-            switch (reader.next()) {
-                case START_ELEMENT:
-                    if ((elementName = getElementTagName(reader.getLocalName())) == FOOD)
-                        food = new Food()
-                                .setId(Integer.parseInt(
-                                        reader.getAttributeValue(null,"id")));
+  public static List<Food> extractMenu(XMLStreamReader reader) throws XMLStreamException {
+    List<Food> menu = new ArrayList<>();
+    Food food = null;
+    MenuTagName elementName = null;
+    String text;
+    while (reader.hasNext())
+      // определение типа "прочтённого" элемента (тега)
+      switch (reader.next()) {
+        case START_ELEMENT:
+          if ((elementName = getElementTagName(reader.getLocalName())) == FOOD)
+            food = new Food()
+              .setId(Integer.parseInt(
+                reader.getAttributeValue(null, "id")));
 
-                    break;
-                case CHARACTERS:
-                    if (!(text = reader.getText().trim()).isEmpty())
-                        switch (elementName) {
-                            case NAME:
-                                food.setName(text);
-                                break;
-                            case PRICE:
-                                food.setPrice(text);
-                                break;
-                            case DESCRIPTION:
-                                food.setDescription(text);
-                                break;
-                            case CALORIES:
-                                food.setCalories(Integer.parseInt(text));
-                        }
-                    break;
-
-                case END_ELEMENT:
-                    if ((elementName = getElementTagName(reader.getLocalName())) == FOOD)
-                        menu.add(food);
+          break;
+        case CHARACTERS:
+          if (!(text = reader.getText().trim()).isEmpty())
+            //noinspection ConstantConditions
+            switch (elementName) {
+              case NAME:
+                //noinspection ConstantConditions
+                food.setName(text);
+                break;
+              case PRICE:
+                //noinspection ConstantConditions
+                food.setPrice(text);
+                break;
+              case DESCRIPTION:
+                //noinspection ConstantConditions
+                food.setDescription(text);
+                break;
+              case CALORIES:
+                //noinspection ConstantConditions
+                food.setCalories(Integer.parseInt(text));
             }
+          break;
 
-        return menu;
-    }
+        case END_ELEMENT:
+          if ((elementName = getElementTagName(reader.getLocalName())) == FOOD)
+            menu.add(food);
+      }
+
+    return menu;
+  }
 
 }

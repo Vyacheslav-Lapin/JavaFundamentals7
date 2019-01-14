@@ -10,16 +10,17 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class Utils {
 
-    int CONST1 = 5;
+  @SuppressWarnings("WeakerAccess")
+  int CONST1 = 5;
 
-    @Contract(pure = true)
-    int sm1() {
-        return CONST1;
-    }
+  @Contract(pure = true)
+  private int sm1() {
+    return CONST1;
+  }
 
-    public void main(String... args) {
-        int i = Utils.sm1();
-        System.out.println(i);
-    }
+  public void main(String... args) {
+    int i = Utils.sm1();
+    System.out.println(i);
+  }
 
 }

@@ -8,11 +8,11 @@ import java.io.IOException;
 
 @WebServlet("/bean-mapping")
 public class ServletForJspElement extends PostHttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if ("naming".equals(req.getParameter("command")))
-            req.getRequestDispatcher("/bean-mapping.jsp")
-                    .forward(req, resp);
-    }
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    throws ServletException, IOException {
+    if ("naming".equals(req.getParameter("command")))
+      req.getRequestDispatcher("/bean-mapping.jsp")
+        .forward(req, resp);
+  }
 }

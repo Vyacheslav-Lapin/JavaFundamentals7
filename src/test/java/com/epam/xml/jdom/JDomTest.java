@@ -26,103 +26,104 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.jdom2.Namespace.getNamespace;
 
+@SuppressWarnings("WeakerAccess")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 class JDomTest {
 
-    static String FILE_NAME = "menu.xml";
-    static String NEW_MENU_FILE_NAME = "newmenu.xml";
-    static Namespace NAMESPACE = getNamespace("http://epam.com/spb/jf/7");
+  static String FILE_NAME = "menu.xml";
+  static String NEW_MENU_FILE_NAME = "newmenu.xml";
+  static Namespace NAMESPACE = getNamespace("http://epam.com/spb/jf/7");
 
-    @NotNull
-    @SuppressWarnings("SpellCheckingInspection")
-    private static XMLOutputter getXmlOutputter() {
-        val xmlOutputter = new XMLOutputter();
-        xmlOutputter.setFormat(Format.getPrettyFormat()
-                .setLineSeparator(LineSeparator.SYSTEM));
-        return xmlOutputter;
-    }
+  @NotNull
+  @SuppressWarnings("SpellCheckingInspection")
+  private static XMLOutputter getXmlOutputter() {
+    val xmlOutputter = new XMLOutputter();
+    xmlOutputter.setFormat(Format.getPrettyFormat()
+      .setLineSeparator(LineSeparator.SYSTEM));
+    return xmlOutputter;
+  }
 
-    private static Element getFoodNameById(Document document, String id) {
-        return document.getRootElement()
-                .getChildren("food", NAMESPACE)
-                .stream()
-                .filter(food -> food.getAttributeValue("id").equals(id))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException(
-                        "There is no food element with id=1, needed for test"))
-                .getChild("name", NAMESPACE);
-    }
+  private static Element getFoodNameById(Document document, String id) {
+    return document.getRootElement()
+      .getChildren("food", NAMESPACE)
+      .stream()
+      .filter(food -> food.getAttributeValue("id").equals(id))
+      .findAny()
+      .orElseThrow(() -> new RuntimeException(
+        "There is no food element with id=1, needed for useExtensionMethods"))
+      .getChild("name", NAMESPACE);
+  }
 
 //    static <T> T doWithAndCleanup()
 
-    @Test
-    @SneakyThrows
-    @DisplayName("\"Read\" method works correctly")
-    void testRead() {
-        new SAXBuilder().build(toTestResourceFilePath(FILE_NAME))
-                .getRootElement().getChildren().stream()
-                .map(Element::getChildren)
-                .flatMap(Collection::stream)
-                .map(Element::getText)
-                .map(String::trim)
-                .forEach(System.out::println);
+  @Test
+  @SneakyThrows
+  @DisplayName("\"Read\" method works correctly")
+  void testRead() {
+    new SAXBuilder().build(toTestResourceFilePath(FILE_NAME))
+      .getRootElement().getChildren().stream()
+      .map(Element::getChildren)
+      .flatMap(Collection::stream)
+      .map(Element::getText)
+      .map(String::trim)
+      .forEach(System.out::println);
+  }
+
+  @Test
+  @Disabled // TODO: 05/07/2018 fix it!
+  @SneakyThrows
+  @DisplayName("\"Write\" works correctly")
+  void testWrite() {
+
+    // given
+    String testResourceFilePath = toTestResourceFilePath(FILE_NAME);
+    String text;
+
+    //when
+    {
+      Document document = mapFileInputStream(FILE_NAME, inputStream ->
+        new SAXBuilder().build(inputStream));
+
+      Element name = getFoodNameById(document, "1");
+      text = name.getText();
+      assertThat(text, is("Belgian Waffles"));
+      name.setText("Meat");
+      try (val fileOutputStream = new FileOutputStream(testResourceFilePath)) {
+        getXmlOutputter().output(document, fileOutputStream);
+      }
     }
 
-    @Test
-    @Disabled // TODO: 05/07/2018 fix it!
-    @SneakyThrows
-    @DisplayName("\"Write\" works correctly")
-    void testWrite() {
+    Thread.sleep(10_000);
 
-        // given
-        String testResourceFilePath = toTestResourceFilePath(FILE_NAME);
-        String text;
+    //then
+    String nameText = mapFileInputStream(FILE_NAME, inputStream ->
+      getFoodNameById(new SAXBuilder().build(inputStream), "1")
+        .getText());
 
-        //when
-        {
-            Document document = mapFileInputStream(FILE_NAME, inputStream ->
-                    new SAXBuilder().build(inputStream));
+    assertThat(nameText, is("Meat"));
 
-            Element name = getFoodNameById(document, "1");
-            text = name.getText();
-            assertThat(text, is("Belgian Waffles"));
-            name.setText("Meat");
-            try (val fileOutputStream = new FileOutputStream(testResourceFilePath)) {
-                getXmlOutputter().output(document, fileOutputStream);
-            }
-        }
-
-        Thread.sleep(10_000);
-
-        //then
-        String nameText = mapFileInputStream(FILE_NAME, inputStream ->
-                getFoodNameById(new SAXBuilder().build(inputStream), "1")
-                        .getText());
-
-        assertThat(nameText, is("Meat"));
-
-        // cleanup
-        {
-            Document document = new SAXBuilder().build(testResourceFilePath);
-            Element name = getFoodNameById(document, "1");
-            name.setText(text);
-            try (val fileOutputStream = new FileOutputStream(FILE_NAME)) {
-                getXmlOutputter().output(document, fileOutputStream);
-            }
-        }
+    // cleanup
+    {
+      Document document = new SAXBuilder().build(testResourceFilePath);
+      Element name = getFoodNameById(document, "1");
+      name.setText(text);
+      try (val fileOutputStream = new FileOutputStream(FILE_NAME)) {
+        getXmlOutputter().output(document, fileOutputStream);
+      }
     }
+  }
 
-    @Test
-    @SneakyThrows
-    @DisplayName("\"Create\" works correctly")
-    void testCreate() {
+  @Test
+  @SneakyThrows
+  @DisplayName("\"Create\" works correctly")
+  void testCreate() {
 
-        @Cleanup val fileOutputStream = new FileOutputStream(NEW_MENU_FILE_NAME);
-        getXmlOutputter().output(new Document(new Element("breakfast-menu")
-                .addContent(new Element("food")
-                        .setAttribute("id", "123")
-                        .addContent(new Element("name")
-                                .setText("Waffles")))), fileOutputStream);
+    @Cleanup val fileOutputStream = new FileOutputStream(NEW_MENU_FILE_NAME);
+    getXmlOutputter().output(new Document(new Element("breakfast-menu")
+      .addContent(new Element("food")
+        .setAttribute("id", "123")
+        .addContent(new Element("name")
+          .setText("Waffles")))), fileOutputStream);
 
-    }
+  }
 }

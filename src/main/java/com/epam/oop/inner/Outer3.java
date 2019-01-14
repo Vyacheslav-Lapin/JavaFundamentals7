@@ -8,18 +8,18 @@ import static lombok.AccessLevel.PRIVATE;
  * Внутренние классы не могут содержать static-полей,
  * кроме final static
  */
-public class Outer3 {
-    //...
+class Outer3 {
+  //...
 
-    @FieldDefaults(level = PRIVATE)
-    class Inner {
-        /*private*/ int i;
-//        private static int static_pole; // ERROR
-        public final static int pubfsi_pole = 22;
-        /*private*/ final static int prfsi_polr = 33;
-    }
+  @FieldDefaults(level = PRIVATE)
+  class Inner {
+    //        private static int static_pole; // ERROR
+    final static int pubfsi_pole = 22;
+    /*private*/ final static int prfsi_polr = 33;
+    /*private*/ int i;
+  }
 
-    //...
+  //...
 }
 
 /**
@@ -27,5 +27,5 @@ public class Outer3 {
  * {@code имя_внешнего_класса.имя_внутреннего класса.имя_статической_переменной}
  */
 class Outer3Another {
-    Outer3.Inner inner = new Outer3().new Inner();
+  Outer3.Inner inner = new Outer3().new Inner();
 }

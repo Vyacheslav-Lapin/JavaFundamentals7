@@ -6,22 +6,23 @@ import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
 public class AnonymInspector {
-    public void printSecond() {
-        SimpleClass myCl = new SimpleClass() {
+  public void printSecond() {
+    //noinspection WeakerAccess
+    SimpleClass myCl = new SimpleClass() {
 
-            @Override
-            public void print() {
-                System.out.println("!!!!!!!");
-                newMethod();
-            }
+      @Override
+      public void print() {
+        System.out.println("!!!!!!!");
+        newMethod();
+      }
 
-            public void newMethod() {
-                System.out.println("New method");
-            }
-        };
-        SimpleClass myCl2 = new SimpleClass();
-        myCl.print();
+      public void newMethod() {
+        System.out.println("New method");
+      }
+    };
+    SimpleClass myCl2 = new SimpleClass();
+    myCl.print();
 //        myCl.newMethod(); // Error
-        myCl2.print();
-    }
+    myCl2.print();
+  }
 }

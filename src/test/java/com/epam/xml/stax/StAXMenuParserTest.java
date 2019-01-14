@@ -20,16 +20,16 @@ import static org.hamcrest.core.Is.is;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 class StAXMenuParserTest {
 
-    @Test
-    @SneakyThrows
-    @DisplayName("\"Process\" method works correctly")
-    void testProcess() {
-        @Cleanup InputStream input = StAXMenuParserTest.class
-                .getResourceAsStream("/menu.xml");
+  @Test
+  @SneakyThrows
+  @DisplayName("\"Process\" method works correctly")
+  void testProcess() {
+    @Cleanup InputStream input = StAXMenuParserTest.class
+      .getResourceAsStream("/menu.xml");
 
-        XMLStreamReader reader = XMLInputFactory.newInstance()
-                .createXMLStreamReader(input);
+    XMLStreamReader reader = XMLInputFactory.newInstance()
+      .createXMLStreamReader(input);
 
-        assertThat(extractMenu(reader).size(), is(2));
-    }
+    assertThat(extractMenu(reader).size(), is(2));
+  }
 }

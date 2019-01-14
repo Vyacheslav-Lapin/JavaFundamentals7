@@ -13,24 +13,24 @@ import java.io.FileWriter;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-public class StAXTest {
+class StAXTest {
 
-    @Test
-    @SneakyThrows
-    @DisplayName("\"Name\" method works correctly")
-    void testName() {
+  @Test
+  @SneakyThrows
+  @DisplayName("\"Name\" method works correctly")
+  void testName() {
 
-        @Cleanup XMLStreamWriter writer = XMLOutputFactory.newInstance()
-                .createXMLStreamWriter(
-                        new FileWriter("src/test/resources/output2.xml"));
+    @Cleanup XMLStreamWriter writer = XMLOutputFactory.newInstance()
+      .createXMLStreamWriter(
+        new FileWriter("./src/test/resources/output2.xml"));
 
-        writer.writeStartDocument();
-        writer.writeStartElement("document");
-        writer.writeStartElement("data");
-        writer.writeAttribute("name", "value");
-        writer.writeCharacters("content");
-        writer.writeEndElement();
-        writer.writeEndElement();
-        writer.writeEndDocument();
-    }
+    writer.writeStartDocument();
+    writer.writeStartElement("document");
+    writer.writeStartElement("data");
+    writer.writeAttribute("name", "value");
+    writer.writeCharacters("content");
+    writer.writeEndElement();
+    writer.writeEndElement();
+    writer.writeEndDocument();
+  }
 }

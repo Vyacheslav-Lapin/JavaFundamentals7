@@ -15,20 +15,20 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Food", propOrder = { "name", "price", "description", "calories" })
+@XmlType(name = "Food", propOrder = {"name", "price", "description", "calories"})
 public class Food {
-    @XmlAttribute(required = true)
-    int id;
+  @XmlAttribute(required = true)
+  int id;
 
-    @XmlElement(required = true)
-    String name;
+  @XmlElement(required = true)
+  String name;
 
-    @XmlElement(required = true)
-    String price;
+  @XmlElement(required = true)
+  String price;
 
-    @XmlElement(required = true)
-    String description;
+  @XmlElement(required = true)
+  String description;
 
-    @XmlElement(required = true)
-    int calories;
+  @XmlElement(required = true)
+  int calories;
 }

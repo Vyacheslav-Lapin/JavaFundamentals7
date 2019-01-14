@@ -12,17 +12,17 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @FieldDefaults(level = PRIVATE)
 public class Outer2 {
-    /*private*/ Inner inner = new Inner();
-    /*private*/ String str;
-    /*private*/ Date date;
+  /*private*/ Inner inner = new Inner();
+  /*private*/ String str;
+  /*private*/ Date date;
 
-    class Inner {
-        public void method() {
-            //...
-        }
-    }
+  public void callMethodInInner() {
+    inner.method();
+  }
 
-    public void callMethodInInner() {
-        inner.method();
+  class Inner {
+    public void method() {
+      //...
     }
+  }
 }

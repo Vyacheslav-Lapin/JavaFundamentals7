@@ -14,11 +14,11 @@ import static javax.jws.soap.SOAPBinding.Style.RPC;
 @WebService(name = "Hello", targetNamespace = "http://ws.xml.epam.com/")
 public interface Hello {
 
-    @WebMethod
-    @WebResult(partName = "return")
-    @Action(input = "http://ws.xml.epam.com/Hello/sayHelloRequest",
-            output = "http://ws.xml.epam.com/Hello/sayHelloResponse")
-    String sayHello(
-        @WebParam(name = "name", partName = "name")
-        String name);
+  @WebMethod
+  @WebResult(partName = "return")
+  @Action(input = "http://ws.xml.epam.com/Hello/sayHelloRequest",
+    output = "http://ws.xml.epam.com/Hello/sayHelloResponse")
+  String sayHello(
+    @WebParam(name = "name", partName = "name")
+      String name);
 }

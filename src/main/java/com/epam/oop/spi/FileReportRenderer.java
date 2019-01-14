@@ -12,15 +12,16 @@ import static lombok.AccessLevel.PACKAGE;
 @FieldDefaults(level = PACKAGE, makeFinal = true)
 public class FileReportRenderer extends ReportRenderer {
 
-    static String FILE_NAME = "./src/test/resources/music.txt";
+  @SuppressWarnings("WeakerAccess")
+  static String FILE_NAME = "./src/test/resources/music.txt";
 
-    @Override
-    @SneakyThrows
-    public void generateReport() {
-        @Cleanup val writer = new FileWriter(FILE_NAME);
-        for (String composition: findMusic())
-            writer.append(composition).append("\n");
-        writer.flush();
-        super.generateReport();
-    }
+  @Override
+  @SneakyThrows
+  public void generateReport() {
+    @Cleanup val writer = new FileWriter(FILE_NAME);
+    for (String composition : findMusic())
+      writer.append(composition).append("\n");
+    writer.flush();
+    super.generateReport();
+  }
 }

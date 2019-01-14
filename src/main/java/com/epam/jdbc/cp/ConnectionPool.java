@@ -1,10 +1,9 @@
 package com.epam.jdbc.cp;
 
 import com.epam.fp.CheckedFunction3;
-import com.epam.io.properties.PropsBinder;
+import com.epam.io.demo.properties.PropsBinder;
 import io.vavr.CheckedFunction1;
 import io.vavr.Function0;
-import io.vavr.Function1;
 import io.vavr.Function2;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -34,99 +33,93 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class ConnectionPool implements Supplier<Connection>, Closeable {
 
-    final BlockingQueue<PooledConnection> freeConnections;
-    volatile boolean isOpened = true;
+  final BlockingQueue<PooledConnection> freeConnections;
+  volatile boolean isOpened = true;
 
-    @SuppressWarnings("unused")
-    public ConnectionPool(String url, String user, String password, int poolSize, String sqlFolder) {
-        this(
-                CheckedFunction3
-                        .<String, String, String, Connection>of(DriverManager::getConnection)
-                        .supply(url, user, password),
-                poolSize,
-                sqlFolder);
-    }
+  @SuppressWarnings("unused")
+  public ConnectionPool(String url, String user, String password, int poolSize, String sqlFolder) {
+    this(
+      CheckedFunction3
+        .<String, String, String, Connection>of(DriverManager::getConnection)
+        .supply(url, user, password),
+      poolSize,
+      sqlFolder);
+  }
 
-    private ConnectionPool(Function0<Connection> connectionCreator, int poolSize, String sqlFolder) {
+  private ConnectionPool(@NotNull Function0<Connection> connectionCreator, int poolSize, String sqlFolder) {
 
-        Supplier<PooledConnection> pooledConnectionCreator = connectionCreator
-                .andThen(Function2.of(PooledConnection::new)
-                        .apply(this::closer));
+    Supplier<PooledConnection> pooledConnectionCreator = connectionCreator
+      .andThen(Function2.of(PooledConnection::new)
+        .apply(this::closer));
 
-        freeConnections = IntStream.iterate(0, operand -> operand + 1)
-                .limit(poolSize)
-                .mapToObj(__ -> pooledConnectionCreator.get())
-                .collect(Collectors.toCollection(() -> new ArrayBlockingQueue<>(poolSize)));
+    freeConnections = Stream.generate(pooledConnectionCreator)
+      .limit(poolSize)
+      .collect(Collectors.toCollection(() -> new ArrayBlockingQueue<>(poolSize)));
 
-        Function1<String, Optional<String>> getFileAsString =
-                Function2.narrow(ConnectionPool::getSqlFileAsString)
-                        .apply(sqlFolder);
+    Function<String, Optional<String>> getFileAsString =
+      Function2.narrow(ConnectionPool::getSqlFileAsString)
+        .apply(sqlFolder);
 
-        execute(IntStream.iterate(1, operand -> operand + 1)
-                .mapToObj(String::valueOf)
-                .map(getFileAsString)
-                .takeWhile(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.joining()));
-    }
+    execute(IntStream.iterate(1, operand -> operand + 1)
+      .mapToObj(String::valueOf)
+      .map(getFileAsString)
+      .takeWhile(Optional::isPresent)
+      .map(Optional::get)
+      .collect(Collectors.joining()));
+  }
 
-    @NotNull
-    public static ConnectionPool fromProps() {
-        return fromProps("jdbc");
-    }
+  @NotNull
+  public static ConnectionPool fromProps() {
+    return fromProps("jdbc");
+  }
 
-    @NotNull
-    public static ConnectionPool fromProps(String jdbc) {
-        return PropsBinder.from(jdbc, ConnectionPool.class);
-    }
+  @NotNull
+  public static ConnectionPool fromProps(String jdbc) {
+    return PropsBinder.from(jdbc, ConnectionPool.class);
+  }
 
-    @SneakyThrows
-    private static Optional<String> getSqlFileAsString(String initScriptsPath, String name) {
-        val path = String.format("/%s/%s.sql", initScriptsPath, name);
+  @SneakyThrows
+  private static Optional<String> getSqlFileAsString(String initScriptsPath, String name) {
+    val path = String.format("/%s/%s.sql", initScriptsPath, name);
 
-        Function<Path, String> read =
-                CheckedFunction1.<Path, String>of(filePath -> {
-                    @Cleanup Stream<String> lines = Files.lines(filePath);
-                    return lines.collect(Collectors.joining());
-                }).unchecked();
+    return Optional.ofNullable(ConnectionPool.class.getResource(path))
+      .map(URL::getFile)
+      .map(Paths::get)
+      .map(CheckedFunction1.<Path, String>narrow(Files::readString)
+        .recover(throwable -> null));
+  }
 
-        return Optional.ofNullable(ConnectionPool.class.getResource(path))
-                .map(CheckedFunction1.narrow(URL::toURI).unchecked())
-                .map(Paths::get)
-                .map(read);
-    }
+  @SneakyThrows
+  public void execute(String sql) {
+    @Cleanup val connection = get();
+    @Cleanup val statement = connection.createStatement();
+    statement.executeUpdate(sql);
+  }
 
-    @SneakyThrows
-    public void execute(String sql) {
-        @Cleanup val connection = get();
-        @Cleanup val statement = connection.createStatement();
-        statement.executeUpdate(sql);
-    }
+  @SneakyThrows
+  private void closer(PooledConnection pooledConnection) {
+    if (isOpened) {
+      if (!pooledConnection.getAutoCommit())
+        pooledConnection.setAutoCommit(true);
+      if (pooledConnection.isReadOnly())
+        pooledConnection.setReadOnly(false);
+      freeConnections.put(pooledConnection);
+    } else
+      pooledConnection.reallyClose();
+  }
 
-    @SneakyThrows
-    private void closer(PooledConnection pooledConnection) {
-        if (isOpened) {
-            if (!pooledConnection.getAutoCommit())
-                pooledConnection.setAutoCommit(true);
-            if (pooledConnection.isReadOnly())
-                pooledConnection.setReadOnly(false);
-            freeConnections.put(pooledConnection);
-        } else
-            pooledConnection.reallyClose();
-    }
+  @Override
+  @SneakyThrows
+  public Connection get() {
+    if (isOpened)
+      return freeConnections.take();
+    else
+      throw new IOException("Connection Pool is already closed!");
+  }
 
-    @Override
-    @SneakyThrows
-    public Connection get() {
-        if (isOpened)
-            return freeConnections.take();
-        else
-            throw new IOException("Connection Pool is already closed!");
-    }
-
-    @Override
-    public void close() {
-        isOpened = false;
-        freeConnections.forEach(PooledConnection::close);
-    }
+  @Override
+  public void close() {
+    isOpened = false;
+    freeConnections.forEach(PooledConnection::close);
+  }
 }

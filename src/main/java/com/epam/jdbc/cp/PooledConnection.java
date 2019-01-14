@@ -14,18 +14,18 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class PooledConnection implements Connection {
 
-    Consumer<PooledConnection> closer;
+  Consumer<PooledConnection> closer;
 
-    @Delegate(excludes = AutoCloseable.class)
-    Connection connection;
+  @Delegate(excludes = AutoCloseable.class)
+  Connection connection;
 
-    @Override
-    public void close() {
-        closer.accept(this);
-    }
+  @Override
+  public void close() {
+    closer.accept(this);
+  }
 
-    @SneakyThrows
-    public void reallyClose() {
-        connection.close();
-    }
+  @SneakyThrows
+  void reallyClose() {
+    connection.close();
+  }
 }

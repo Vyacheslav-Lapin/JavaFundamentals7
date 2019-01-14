@@ -7,22 +7,22 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class A {
 
-    int x;
-    int y;
+  int x;
+  int y;
 
-    private A(int x, int y) {
+  private A(int x, int y) {
 
 //        if (x == y)
 //            throw new RuntimeException("kjbsdg");
 
-        this.x = x;
-        this.y = y;
-    }
+    this.x = x;
+    this.y = y;
+  }
 
-    public static A newA(int x, int y) {
-        if (x == y)
-            throw new RuntimeException("kjbsdg");
+  public static A newA(int x, int y) {
+    if (x == y)
+      throw new RuntimeException("kjbsdg");
 
-        return new A(x, y);
-    }
+    return new A(x, y);
+  }
 }

@@ -10,51 +10,51 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class Outer5 {
 
-    Inner inner;
+  Inner inner;
 
-    Outer5() {
-        inner = new Inner();
+  private Outer5() {
+    inner = new Inner();
+  }
+
+  public static void main(String... args) {
+//        getStudents(new String[]{"", "jhgsdf"});
+    Outer5 outer5 = new Outer5();
+    outer5.callMethodInInner();
+    for (Integer integer : outer5.getIterator()) {
+      System.out.println(integer);
     }
 
-    public class Inner implements Iterable<Integer> {
-        public final static int pubfsi_pole = 22;
-        private final static int prfsi_polr = 33;
-        private int x = 58;
+  }
 
-        @NotNull
+  private void callMethodInInner() {
+    System.out.println(Inner.prfsi_polr);
+    System.out.println(Inner.pubfsi_pole);
+    System.out.println(inner.x);
+  }
+
+  private Iterable<Integer> getIterator() {
+    return inner;
+  }
+
+  public class Inner implements Iterable<Integer> {
+    final static int pubfsi_pole = 22;
+    private final static int prfsi_polr = 33;
+    private int x = 58;
+
+    @NotNull
+    @Override
+    public Iterator<Integer> iterator() {
+      return new Iterator<>() {
         @Override
-        public Iterator<Integer> iterator() {
-            return new Iterator<>() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public Integer next() {
-                    return x;
-                }
-            };
-        }
-    }
-
-    public void callMethodInInner() {
-        System.out.println(Inner.prfsi_polr);
-        System.out.println(Inner.pubfsi_pole);
-        System.out.println(inner.x);
-    }
-
-    public Iterable<Integer> getIterator () {
-        return inner;
-    }
-
-    public static void main(String... args) {
-//        main(new String[]{"", "jhgsdf"});
-        Outer5 outer5 = new Outer5();
-        outer5.callMethodInInner();
-        for (Integer integer : outer5.getIterator()) {
-//            kjhdsfjkhdf
+        public boolean hasNext() {
+          return false;
         }
 
+        @Override
+        public Integer next() {
+          return x;
+        }
+      };
     }
+  }
 }

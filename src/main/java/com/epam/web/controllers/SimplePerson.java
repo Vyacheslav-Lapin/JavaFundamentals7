@@ -8,7 +8,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Data
 @FieldDefaults(level = PRIVATE)
 public class SimplePerson {
-    String name;
-    String surname;
+  String name;
+  String surname;
 //    LocalDate date;
 }

@@ -10,31 +10,31 @@ import java.util.function.Function;
 
 public interface JsonRestfulWebResource {
 
-    ObjectMapper objectMapper = new ObjectMapper();
+  ObjectMapper objectMapper = new ObjectMapper();
 
-    Function<Object, String> toJsonExceptional =
-            CheckedFunction1.of(
-                    objectMapper.writer().withDefaultPrettyPrinter()::writeValueAsString)
-                    .unchecked();
+  Function<Object, String> toJsonExceptional =
+    CheckedFunction1.of(
+      objectMapper.writer().withDefaultPrettyPrinter()::writeValueAsString)
+      .unchecked();
 
-    @SneakyThrows
-    default <T> T fromJSON(String s, Class<T> aClass) {
-        return objectMapper.readValue(s, aClass);
-    }
+  @SneakyThrows
+  default <T> T fromJSON(String s, Class<T> aClass) {
+    return objectMapper.readValue(s, aClass);
+  }
 
-    default String toJson(Object o) {
-        return toJsonExceptional.apply(o);
-    }
+  default String toJson(Object o) {
+    return toJsonExceptional.apply(o);
+  }
 
-    default Response ok(Collection<?> objects) {
-        return Response.ok(toJson(objects)).build();
-    }
+  default Response ok(Collection<?> objects) {
+    return Response.ok(toJson(objects)).build();
+  }
 
-    default Response ok(Object o) {
-        return Response.ok(toJson(o)).build();
-    }
+  default Response ok(Object o) {
+    return Response.ok(toJson(o)).build();
+  }
 
-    default Response noContent() {
-        return Response.noContent().build();
-    }
+  default Response noContent() {
+    return Response.noContent().build();
+  }
 }

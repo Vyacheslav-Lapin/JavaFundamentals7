@@ -12,13 +12,13 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @FieldDefaults(level = PRIVATE)
 public class Outer1 {
-    /*private*/ String str;
-    /*private*/ Date date;
+  /*private*/ String str;
+  /*private*/ Date date;
 
-    class Inner {
-        public void method() {
-            System.out.println(str);
-            System.out.println(date.getTime());
-        }
+  class Inner {
+    public void method() {
+      System.out.println(str);
+      System.out.println(date.getTime());
     }
+  }
 }
